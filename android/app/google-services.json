@@ -1,14 +1,15 @@
 {
   "project_info": {
     "project_number": "000000000000",
-    "project_id": "dev"
+    "project_id": "dev",
+    "storage_bucket": "dev.appspot.com"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
         "android_client_info": {
-          "package_name": "com.follow.clash"
+          "package_name": "com.follow.clash.ee"
         }
       },
       "oauth_client": [],
@@ -27,7 +28,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
         "android_client_info": {
-          "package_name": "com.follow.clash.debug"
+          "package_name": "com.follow.clash.ee.debug"
         }
       },
       "oauth_client": [],
@@ -46,7 +47,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
         "android_client_info": {
-          "package_name": "com.follow.clash.dev"
+          "package_name": "com.follow.clash.ee.dev"
         }
       },
       "oauth_client": [],
@@ -61,5 +62,6 @@
         }
       }
     }
-  ]
+  ],
+  "configuration_version": "1"
 }
