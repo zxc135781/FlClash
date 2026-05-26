@@ -62,7 +62,9 @@ class ApplicationState extends ConsumerState<Application> {
 
   void _autoUpdateProfilesTask() {
     _autoUpdateProfilesTaskTimer = Timer(const Duration(minutes: 20), () async {
-      await appController.autoUpdateProfiles();
+      try {
+        await appController.autoUpdateProfiles();
+      } catch (_) {}
       _autoUpdateProfilesTask();
     });
   }
@@ -166,7 +168,6 @@ class ApplicationState extends ConsumerState<Application> {
   Future<void> dispose() async {
     linkManager.destroy();
     _autoUpdateProfilesTaskTimer?.cancel();
-    await coreController.destroy();
     await appController.handleExit();
     super.dispose();
   }

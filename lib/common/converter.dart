@@ -20,7 +20,7 @@ class _Uint8ListToListIntConverterSink implements Sink<Uint8List> {
 
   @override
   void add(Uint8List data) {
-    _target.add(data.toList());
+    _target.add(data);
   }
 
   @override

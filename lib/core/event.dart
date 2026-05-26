@@ -21,24 +21,35 @@ class CoreEventManager {
 
   CoreEventManager._() {
     _controller.stream.listen((event) {
-      for (final CoreEventListener listener in _listeners) {
-        switch (event.type) {
-          case CoreEventType.log:
-            listener.onLog(Log.fromJson(event.data));
-            break;
-          case CoreEventType.delay:
-            listener.onDelay(Delay.fromJson(event.data));
-            break;
-          case CoreEventType.request:
-            listener.onRequest(TrackerInfo.fromJson(event.data));
-            break;
-          case CoreEventType.loaded:
+      switch (event.type) {
+        case CoreEventType.log:
+          final log = Log.fromJson(event.data);
+          for (final CoreEventListener listener in _listeners) {
+            listener.onLog(log);
+          }
+          break;
+        case CoreEventType.delay:
+          final delay = Delay.fromJson(event.data);
+          for (final CoreEventListener listener in _listeners) {
+            listener.onDelay(delay);
+          }
+          break;
+        case CoreEventType.request:
+          final tracker = TrackerInfo.fromJson(event.data);
+          for (final CoreEventListener listener in _listeners) {
+            listener.onRequest(tracker);
+          }
+          break;
+        case CoreEventType.loaded:
+          for (final CoreEventListener listener in _listeners) {
             listener.onLoaded(event.data);
-            break;
-          case CoreEventType.crash:
+          }
+          break;
+        case CoreEventType.crash:
+          for (final CoreEventListener listener in _listeners) {
             listener.onCrash(event.data);
-            break;
-        }
+          }
+          break;
       }
     });
   }

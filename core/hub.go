@@ -26,11 +26,12 @@ import (
 	"runtime"
 	"runtime/debug"
 	"strconv"
+	"sync/atomic"
 	"time"
 )
 
 var (
-	isInit            = false
+	isInit            atomic.Bool
 	externalProviders = map[string]cp.Provider{}
 	logSubscriber     observable.Subscription[log.Event]
 )
@@ -45,14 +46,14 @@ func handleInitClash(paramsString string) bool {
 	}
 	version = params.Version
 	constant.SetHomeDir(params.HomeDir)
-	isInit = true
-	return isInit
+	isInit.Store(true)
+	return true
 }
 
 func handleStartListener() bool {
 	runLock.Lock()
 	defer runLock.Unlock()
-	isRunning = true
+	isRunning.Store(true)
 	updateListeners()
 	resolver.ResetConnection()
 	return true
@@ -61,14 +62,14 @@ func handleStartListener() bool {
 func handleStopListener() bool {
 	runLock.Lock()
 	defer runLock.Unlock()
-	isRunning = false
+	isRunning.Store(false)
 	listener.StopListener()
 	resolver.ResetConnection()
 	return true
 }
 
 func handleGetIsInit() bool {
-	return isInit
+	return isInit.Load()
 }
 
 func handleForceGC() {
@@ -83,12 +84,15 @@ func handleShutdown() bool {
 	stopListeners()
 	executor.Shutdown()
 	handleForceGC()
-	isInit = false
+	isInit.Store(false)
 	return true
 }
 
 func handleValidateConfig(path string) string {
 	buf, err := readFile(path)
+	if err != nil {
+		return err.Error()
+	}
 	_, err = config.UnmarshalRawConfig(buf)
 	if err != nil {
 		return err.Error()
@@ -145,17 +149,17 @@ func handleGetProxies() ProxiesData {
 }
 
 func handleChangeProxy(data string, fn func(string string)) {
-	runLock.Lock()
+	var params = &ChangeProxyParams{}
+	err := json.Unmarshal([]byte(data), params)
+	if err != nil {
+		fn(err.Error())
+		return
+	}
+	groupName := *params.GroupName
+	proxyName := *params.ProxyName
 	go func() {
+		runLock.Lock()
 		defer runLock.Unlock()
-		var params = &ChangeProxyParams{}
-		err := json.Unmarshal([]byte(data), params)
-		if err != nil {
-			fn(err.Error())
-			return
-		}
-		groupName := *params.GroupName
-		proxyName := *params.ProxyName
 		proxies := tunnel.ProxiesWithProviders()
 		group, ok := proxies[groupName]
 		if !ok {
@@ -179,7 +183,6 @@ func handleChangeProxy(data string, fn func(string string)) {
 		}
 
 		fn("")
-		return
 	}()
 }
 
@@ -510,6 +513,7 @@ func handleDelFile(path string, result ActionResult) {
 		if err != nil {
 			if !os.IsNotExist(err) {
 				result.success(err.Error())
+				return
 			}
 			result.success("")
 			return
@@ -532,7 +536,7 @@ func handleDelFile(path string, result ActionResult) {
 }
 
 func handleSetupConfig(bytes []byte) string {
-	if !isInit {
+	if !isInit.Load() {
 		return "not initialized"
 	}
 	var params = defaultSetupParams()

@@ -47,18 +47,18 @@ class Utils {
 
     int length = minLength + random.nextInt(maxLength - minLength + 1);
 
-    String result = '';
+    final buffer = StringBuffer();
     for (int i = 0; i < length; i++) {
       if (random.nextBool()) {
-        result += String.fromCharCode(
+        buffer.writeCharCode(
           0x4E00 + random.nextInt(0x9FA5 - 0x4E00 + 1),
         );
       } else {
-        result += latinChars[random.nextInt(latinChars.length)];
+        buffer.write(latinChars[random.nextInt(latinChars.length)]);
       }
     }
 
-    return result;
+    return buffer.toString();
   }
 
   String get uuidV4 {
