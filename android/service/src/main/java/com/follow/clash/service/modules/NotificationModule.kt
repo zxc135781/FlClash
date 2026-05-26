@@ -17,7 +17,7 @@ import com.follow.clash.common.startForeground
 import com.follow.clash.common.tickerFlow
 import com.follow.clash.common.toPendingIntent
 import com.follow.clash.core.Core
-import com.follow.clash.service.R
+import com.follow.clash.ee.service.R
 import com.follow.clash.service.State
 import com.follow.clash.service.models.NotificationParams
 import com.follow.clash.service.models.getSpeedTrafficText

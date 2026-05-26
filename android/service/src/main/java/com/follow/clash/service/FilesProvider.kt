@@ -7,6 +7,7 @@ import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.DocumentsProvider
 import java.io.File
+import com.follow.clash.ee.service.R
 import java.io.FileNotFoundException
 
 class FilesProvider : DocumentsProvider() {
