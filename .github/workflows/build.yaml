@@ -63,11 +63,15 @@ jobs:
       - name: Setup Android Signing
         if: startsWith(matrix.platform,'android')
         run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
-          echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/local.properties
-          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/local.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/local.properties
+          if [ -n "${{ secrets.KEYSTORE }}" ]; then
+            echo "${{ secrets.KEYSTORE }}" | base64 --decode > android/app/keystore.jks
+            echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/local.properties
+            echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/local.properties
+            echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/local.properties
+          fi
+          if [ -n "${{ secrets.SERVICE_JSON }}" ]; then
+            echo "${{ secrets.SERVICE_JSON }}" | base64 --decode > android/app/google-services.json
+          fi
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -105,6 +109,8 @@ jobs:
           overwrite: true
 
   changelog:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     needs: [ build ]
     steps:
@@ -114,6 +120,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: refs/heads/main
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate
         if: ${{ env.IS_STABLE == 'true' }}
         run: |
@@ -206,6 +213,7 @@ jobs:
             awk '!/Update changelog/ && NF {print "- " $0 "\n"}' >> "$out"
           done
       - name: Push to telegram
+        continue-on-error: true
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TAG: ${{ github.ref_name }}
