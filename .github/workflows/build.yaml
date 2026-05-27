@@ -251,6 +251,7 @@ jobs:
           echo "Files copied successfully"
 
       - name: Push to fdroid repo
+        continue-on-error: true
         if: ${{ env.IS_STABLE == 'true' }}
         uses: cpina/github-action-push-to-another-repository@v1.7.2
         env:
