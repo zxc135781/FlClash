@@ -1,3 +1,143 @@
+## v0.8.82.ee
+
+- Fix CI: add changelog push permissions and make telegram upload non-blocking
+
+- - Add permissions: contents: write to changelog job
+
+- - Pass GITHUB_TOKEN to checkout for authenticated git push
+
+- - Add continue-on-error to telegram step so release/fdroid steps still run
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Fix R class import to match EE namespace
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Remove deprecated package attribute from AndroidManifest.xml
+
+- The namespace is already defined in build.gradle.kts, keeping the
+
+- package attribute in the manifest causes a build failure with newer
+
+- AGP versions.
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Fix method channel mismatch and manifest class resolution for EE rebrand
+
+- - Add CHANNEL_PREFIX constant for method channels (com.follow.clash.ee)
+
+- - Update ServicePlugin, TilePlugin, AppPlugin to use CHANNEL_PREFIX
+
+- - Add package="com.follow.clash" to AndroidManifest so relative class
+
+-   names resolve to actual Kotlin package
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Revert google-services.json to original structure with EE package names
+
+- Remove configuration_version and storage_bucket fields that may cause
+
+- plugin compatibility issues.
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Fix google-services.json: add configuration_version and match EE package names
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Cap connectivity_plus to <7.1.0 to fix macOS build
+
+- connectivity_plus 7.1.x uses NWPath.isUltraConstrained which requires
+
+- macOS 26 SDK (Xcode 16.5+), unavailable in current CI environment.
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Fix R class import to match service module namespace
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Remove stale Podfile.lock to fix macOS sqlite3 dependency resolution
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Fix intl version constraint to match Flutter SDK 0.20.2
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Remove stale pubspec.lock to fix CI dependency resolution
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
+- Rebrand to FlClash-EE and apply optimizations
+
+- - Rebrand all identifiers for coexistence with original FlClash
+
+-   - Android: applicationId com.follow.clash.ee
+
+-   - macOS/Linux: bundle ID com.follow.clash.ee
+
+-   - Windows: new app_id UUID
+
+-   - Core binary: FlClashEECore
+
+-   - Helper service: FlClashEEHelperService
+
+-   - URL schemes: clashmeta-ee, flclashee
+
+-   - Display name: FlClash-EE across all platforms
+
+- - Fix critical Go core bugs
+
+-   - Use-after-free in getTotalTraffic/getTraffic (lib.go)
+
+-   - Missing return in getExternalProviderMethod (action.go)
+
+-   - Inverted error check in sideUpdateExternalProvider (common.go)
+
+-   - Double response in handleDelFile (hub.go)
+
+-   - Error overwrite in handleValidateConfig (hub.go)
+
+- - Go core performance & safety
+
+-   - isRunning/isInit: atomic.Bool to fix data races
+
+-   - Safe type assertions with requireString/requireBool helpers
+
+-   - Fix handleChangeProxy lock pattern
+
+-   - Remove synchronous runtime.GC() from applyConfig
+
+- - Dart performance
+
+-   - FixedList.copyWith() crash fix
+
+-   - StringBuffer for generateRandomString O(n²)
+
+-   - Remove unnecessary Uint8List.toList() copy
+
+-   - Event JSON deserialized once per event, not N times per listener
+
+-   - Fix putProfileDisabledRule wrong scene
+
+- - CI/CD improvements
+
+-   - Add Cargo cache for Rust builds
+
+-   - Fix permissions: contents: write
+
+-   - Extract Flutter version to env variable
+
+-   - Add fail-fast: false
+
+-   - Pin intl version
+
+- Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+
 ## v0.8.92
 
 - Add sqlite store
